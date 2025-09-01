@@ -243,8 +243,6 @@ Para explorar este projeto, siga estas etapas. Garanto uma experiência suave e 
 
 ## 📈 Melhorias Futuras e Roadmap
 
-Este projeto é uma POC sólida, mas o mundo do MLOps está em constante evolução. Aqui estão algumas ideias para futuras melhorias que eu estaria apto a implementar:
-
 *   **CI/CD Automatizado:** Implementar GitHub Actions (ou Jenkins, GitLab CI) para automação de testes, build, deploy de serviços e triggers de pipelines de ML.
 *   **Monitoramento de Drift de Dados e Modelo:** Integração com ferramentas como Evidently AI ou Fiddler para detectar quando a performance do modelo se degrada ou os dados de entrada mudam.
 *   **Infraestrutura Cloud-Native:** Migrar os serviços para plataformas como AWS (ECS/EKS, S3, RDS, SageMaker), GCP (Cloud Run, GCS, Vertex AI) ou Azure (Container Apps, Blob Storage, Azure ML).
