@@ -9,7 +9,7 @@
 
 ---
 
-## 👨‍💻 Sobre o Projeto: Construindo um Pilar de MLOps para Previsão de Vendas
+## 👨‍💻 Sobre o Projeto: Construindo um Pipeline de MLOps para Previsão de Vendas com APIs, MLflow e Prefect
 
 Olá! Sou **Elias Andrade**, um especialista em IA, Dados e MLOps, e este projeto é uma demonstração prática e modular de como construo pipelines de Machine Learning de ponta a ponta, focado em **escalabilidade, desacoplamento e observabilidade**. Aqui, apresento uma **Prova de Conceito (POC)** de um sistema de previsão de vendas de veículos Chevrolet, simulando um ambiente de produção realista com princípios de **arquitetura de microserviços** e orquestração robusta.
 
