@@ -1,4 +1,4 @@
-# ✨ MLOps Simulated Sales Prediction Pipeline: A Modular & Decoupled Showcase  - Projeto de demonstração - Tech Demo Showcase Pipeline de dados modular MLops✨
+# ✨ Projeto de demonstração - Tech Demo Showcase Pipeline de dados modular MLops✨
 
 [![MLOps](https://img.shields.io/badge/MLOps-Architecture-blueviolet?style=for-the-badge&logo=apacheairflow&logoColor=white)](https://ml-ops.org/)
 [![Prefect](https://img.shields.io/badge/Orchestration-Prefect%202.x-8a00b6?style=for-the-badge&logo=prefect&logoColor=white)](https://www.prefect.io/)
