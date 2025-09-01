@@ -1,0 +1,15 @@
+flask
+flask-cors
+werkzeug
+requests
+pandas
+numpy
+matplotlib
+scikit-learn
+tensorflow
+mlflow
+prefect>=2.0
+joblib
+pyyaml
+# Observação: sqlite3 é built-in no Python e não precisa ser listado.
+# pip install --upgrade "protobuf<3.20" # Descomente se tiver problemas com TensorFlow/protobuf

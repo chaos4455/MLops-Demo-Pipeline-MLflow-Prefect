@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚗 MLOps Pipeline de Previsão de Vendas Chevrolet 2024</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff; /* Azul vibrante */
+            --secondary-color: #6c757d; /* Cinza escuro */
+            --accent-color: #28a745; /* Verde sucesso */
+            --warning-color: #ffc107; /* Amarelo alerta */
+            --error-color: #dc3545; /* Vermelho erro */
+            --info-color: #17a2b8; /* Azul claro info */
+            --bg-light: #f8f9fa; /* Fundo claro */
+            --bg-dark: #343a40; /* Fundo escuro */
+            --text-dark: #212529; /* Texto escuro */
+            --text-light: #f8f9fa; /* Texto claro */
+            --border-color: #dee2e6; /* Cor da borda */
+            --component-bg: #e9ecef; /* Fundo do componente */
+            --header-bg: #e0f2f7; /* Fundo do cabeçalho */
+            --flow-bg: #d4edda; /* Fundo do fluxo */
+            --mlflow-color: #fd680c; /* Cor do MLflow */
+            --prefect-color: #17b7b3; /* Cor do Prefect */
+            --flask-color: #000000; /* Cor do Flask */
+            --dark-blue: #002c5f; /* Azul escuro da chevrolet */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--dark-blue), var(--primary-color));
+            color: var(--text-light);
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-top: 0;
+        }
+
+        section {
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--dark-blue);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            color: var(--dark-blue);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.6em;
+            color: var(--secondary-color);
+            border-bottom: 2px dashed var(--border-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-size: 1.05em;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+
+        .badge-api { background-color: var(--flask-color); color: var(--text-light); }
+        .badge-flow { background-color: var(--prefect-color); color: var(--text-light); }
+        .badge-mlflow { background-color: var(--mlflow-color); color: var(--text-light); }
+        .badge-db { background-color: #6f42c1; color: var(--text-light); }
+        .badge-tool { background-color: #17a2b8; color: var(--text-light); }
+        .badge-port { background-color: #ff9100; color: var(--text-light); }
+        .badge-data { background-color: #007bff; color: var(--text-light); }
+        .badge-model { background-color: #28a745; color: var(--text-light); }
+
+        .component-block {
+            display: flex;
+            align-items: flex-start;
+            background-color: var(--component-bg);
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .component-block:hover {
+            transform: translateY(-5px);
+        }
+
+        .component-block .icon {
+            font-size: 2.5em;
+            margin-right: 20px;
+            color: var(--dark-blue);
+            flex-shrink: 0;
+        }
+
+        .component-block .content h4 {
+            margin-top: 0;
+            color: var(--dark-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+
+        .component-block .content p {
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .flow-step {
+            background-color: var(--flow-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 20px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .flow-step .step-icon {
+            font-size: 3em;
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+        }
+
+        .flow-step h4 {
+            margin-top: 0;
+            color: var(--dark-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .flow-step p {
+            font-size: 0.9em;
+            color: var(--text-dark);
+            margin-bottom: 0;
+        }
+
+        .arrow {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            align-self: center;
+            margin: 0 10px;
+        }
+
+        .full-width-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: stretch;
+            margin-top: 20px;
+        }
+
+        .full-width-flow .step {
+            background-color: #e3f2fd; /* Light blue */
+            border-left: 6px solid var(--primary-color);
+            padding: 18px 25px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1em;
+            position: relative;
+        }
+        .full-width-flow .step::after {
+            content: '▼';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary-color);
+            font-size: 1.5em;
+            display: block; /* Garante que a seta apareça */
+        }
+        .full-width-flow .step:last-child::after {
+            content: ''; /* Remove a seta do último passo */
+        }
+
+
+        .full-width-flow .step .step-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--dark-blue);
+            flex-shrink: 0;
+        }
+        .full-width-flow .step .step-description {
+            flex-grow: 1;
+        }
+
+        .full-width-flow .step strong {
+            color: var(--primary-color);
+        }
+
+        .grid-technologies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tech-item {
+            background-color: #f0f4f7;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--secondary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .tech-item .tech-icon {
+            font-size: 2em;
+            color: var(--primary-color);
+        }
+
+        .execution-steps {
+            background-color: #fff3cd; /* Light warning yellow */
+            border-left: 6px solid var(--warning-color);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .execution-steps h3 {
+            color: var(--warning-color);
+            border-bottom-color: var(--warning-color);
+        }
+
+        .execution-steps ol {
+            padding-left: 25px;
+        }
+
+        .execution-steps li {
+            margin-bottom: 12px;
+            font-size: 1.05em;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .execution-steps li::marker {
+            font-weight: bold;
+            color: var(--warning-color);
+        }
+
+        .execution-steps li strong {
+            color: var(--dark-blue);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--secondary-color);
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-color);
+        }
+
+        code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace; /* Ou Monospace padrão */
+            font-size: 0.9em;
+            color: var(--dark-blue);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            h3 {
+                font-size: 1.4em;
+            }
+            .component-block {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .component-block .icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            .flow-diagram {
+                flex-direction: column;
+                align-items: center;
+            }
+            .flow-step {
+                width: 90%;
+            }
+            .full-width-flow .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            .full-width-flow .step .step-number {
+                margin-bottom: 10px;
+            }
+            .full-width-flow .step::after {
+                left: 50%;
+                transform: translateX(-50%) rotate(90deg); /* Ajusta a seta para baixo */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span style="font-size: 0.8em;">🚗📈</span> MLOps Pipeline de Previsão de Vendas Chevrolet 2024</h1>
+            <p>Documentação Completa da Arquitetura e Fluxo de Dados</p>
+        </header>
+
+        <section id="introducao">
+            <h2>✨ Introdução ao Pipeline MLOps</h2>
+            <p>Este documento detalha um pipeline MLOps completo, projetado para gerenciar o ciclo de vida de um modelo de Machine Learning focado na previsão de vendas de veículos Chevrolet para o ano de 2024. Desde a geração e ingestão de dados até o treinamento, registro, serviço e teste do modelo, e a geração de relatórios analíticos, cada etapa é orquestrada para garantir eficiência, rastreabilidade e confiabilidade.</p>
+            <p>O objetivo é demonstrar uma arquitetura de dados e ML robusta, utilizando ferramentas como <span class="highlight">Flask para APIs</span>, <span class="highlight">Prefect para orquestração de dados</span>, e <span class="highlight">MLflow para gerenciamento de experimentos e modelos</span>. O foco está no fluxo de informações e na interação entre os diferentes serviços.</p>
+        </section>
+
+        <section id="visao-geral-arquitetura">
+            <h2>🗺️ Visão Geral da Arquitetura</h2>
+            <p>A arquitetura do pipeline é modular e distribuída, composta por diversos microserviços e ferramentas que trabalham em conjunto. Abaixo, uma representação simplificada do fluxo principal:</p>
+
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span role="img" aria-label="Geração de Dados">🏭</span>
+                    </div>
+                    <h4>Geração de Dados Brutos</h4>
+                    <p>API Flask Simula Vendas</p>
+                </div>
+                <div class="arrow">➡️</div>
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span role="img" aria-label="Injestão de Dados">📥</span>
+                    </div>
+                    <h4>Injestão de Dados</h4>
+                    <p>Prefect Flow busca e armazena</p>
+                </div>
+                <div class="arrow">➡️</div>
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span role="img" aria-label="Armazenamento de Dados">🗄️</span>
+                    </div>
+                    <h4>Data Lake / Storage Passiva</h4>
+                    <p>API Flask armazena dados brutos</p>
+                </div>
+                <div class="arrow">➡️</div>
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span role="img" aria-label="Treinamento de Modelo">🧠</span>
+                    </div>
+                    <h4>Treinamento ML & MLflow</h4>
+                    <p>Pipeline ML treina e registra modelo</p>
+                </div>
+                <div class="arrow">➡️</div>
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span role="img" aria-label="Serviço de Modelo">🚀</span>
+                    </div>
+                    <h4>Serviço de Modelo</h4>
+                    <p>API Flask serve previsões</p>
+                </div>
+                 <div class="arrow">➡️</div>
+                <div class="flow-step">
+                    <div class="step-icon">
+                        <span role="img" aria-label="Teste de Modelo">🧪</span>
+                    </div>
+                    <h4>Teste do Modelo</h4>
+                    <p>Tester verifica a API de previsão</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-style: italic;">(Paralelamente, há um pipeline de geração de relatórios a partir do Data Lake e armazenamento de artefatos externos)</p>
+        </section>
+
+        <section id="componentes-pipeline">
+            <h2>🛠️ Componentes do Pipeline</h2>
+            <p>Cada arquivo Python representa um serviço ou componente chave com uma responsabilidade específica:</p>
+
+            <div class="component-block">
+                <div class="icon">🏭</div>
+                <div class="content">
+                    <h4><span class="badge badge-api">API</span> API-DATA-SERVER-V1.PY</h4>
+                    <p><strong>Função:</strong> Simula a <span class="highlight">fonte de dados original</span>, gerando dados de vendas fictícios, porém realistas, para concessionárias Chevrolet em 2024.</p>
+                    <p><strong>Interage com:</strong> Ninguém (fonte inicial de dados).</p>
+                    <p><strong>Disponível em:</strong> <span class="badge badge-port">Porta 8777</span> - Endpoint <code class="code">/sales_data</code></p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">📥</div>
+                <div class="content">
+                    <h4><span class="badge badge-flow">Prefect Flow</span> PREFECT-DATA-INJECTION-FLOW-V1.PY</h4>
+                    <p><strong>Função:</strong> Orquestra a <span class="highlight">ingestão de dados</span>. Busca dados da API de vendas (8777) e os envia para a API de Storage (8778).</p>
+                    <p><strong>Interage com:</strong> <code>API-DATA-SERVER-V1.PY</code> (GET) e <code>API-OBJECT-STORAGE-SERVER-V1.PY</code> (POST).</p>
+                    <p><strong>Ferramenta:</strong> <span class="badge badge-tool">Prefect</span> para orquestração de fluxos de trabalho de dados.</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">🗄️</div>
+                <div class="content">
+                    <h4><span class="badge badge-api">API</span> API-OBJECT-STORAGE-SERVER-V1.PY</h4>
+                    <p><strong>Função:</strong> Atua como um <span class="highlight">Data Lake passivo</span>, recebendo e armazenando dados brutos de vendas em um banco de dados SQLite (<code>sales_data_lake.db</code>).</p>
+                    <p><strong>Interage com:</strong> Recebe dados via POST do Prefect Flow (ingestão) e serve dados via GET para os pipelines MLflow (treinamento e análise).</p>
+                    <p><strong>Disponível em:</strong> <span class="badge badge-port">Porta 8778</span> - Endpoints <code class="code">/store_data</code> (POST) e <code class="code">/datasource</code> (GET)</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">📊</div>
+                <div class="content">
+                    <h4><span class="badge badge-mlflow">MLflow Server</span> ML-FLOW-SERVER-V1.PY</h4>
+                    <p><strong>Função:</strong> Inicia o <span class="highlight">MLflow Tracking Server</span>, essencial para rastrear experimentos de ML, logar métricas, parâmetros, artefatos e gerenciar o Model Registry.</p>
+                    <p><strong>Interage com:</strong> Todos os pipelines MLflow para rastreamento e registro de modelos.</p>
+                    <p><strong>Disponível em:</strong> <span class="badge badge-port">Porta 5001</span> - UI do MLflow</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">🧠</div>
+                <div class="content">
+                    <h4><span class="badge badge-mlflow">MLflow Pipeline</span> ML-FLOW-DATA-PIPELINE-MODEL-TRAINER-GRAPH-REPORT-EXPORTER.PY</h4>
+                    <p><strong>Função:</strong> O <span class="highlight">coração do treinamento ML</span>. Busca dados do Data Lake (8778), pré-processa-os, treina um modelo Keras para previsão de vendas, avalia-o, registra o modelo (incluindo pré-processador) no MLflow Model Registry e gera relatórios e gráficos de desempenho. Também faz upload de artefatos para o Artifact Storage (8779).</p>
+                    <p><strong>Interage com:</strong> <code>API-OBJECT-STORAGE-SERVER-V1.PY</code> (GET), <span class="badge badge-tool">MLflow Server</span> (log, registro), <code>API-SERVER-DATA-STORAGE-OUTPUT-V1.PY</code> (upload).</p>
+                    <p><strong>Modelagem:</strong> Usa <span class="badge badge-tool">TensorFlow/Keras</span>, <span class="badge badge-tool">scikit-learn</span>.</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">📦</div>
+                <div class="content">
+                    <h4><span class="badge badge-api">API</span> API-SERVER-DATA-STORAGE-OUTPUT-V1.PY</h4>
+                    <p><strong>Função:</strong> Um <span class="highlight">serviço de armazenamento de artefatos</span>. Recebe arquivos (relatórios, gráficos) via POST e os armazena em um diretório local. Permite acesso via GET para download.</p>
+                    <p><strong>Interage com:</strong> Pipelines MLflow (trainer e gerador de gráficos) para upload de artefatos.</p>
+                    <p><strong>Disponível em:</strong> <span class="badge badge-port">Porta 8779</span> - Endpoints <code class="code">/upload_artifact</code> (POST), <code class="code">/artifacts/&lt;filename&gt;</code> (GET)</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">🚀</div>
+                <div class="content">
+                    <h4><span class="badge badge-api">API</span> API-SERVER-MODEL-LOAD-FROM-ML-FLOW--PREDICT-SERVICE-V1.PY</h4>
+                    <p><strong>Função:</strong> O <span class="highlight">serviço de inferência do modelo</span>. Carrega a versão mais recente (ou especificada) do modelo <code>ChevroletSalesPredictor</code> do MLflow Model Registry e expõe um endpoint POST para receber novas requisições e retornar previsões.</p>
+                    <p><strong>Interage com:</strong> <span class="badge badge-tool">MLflow Server</span> (para carregar o modelo) e <code>API-SERVER-MODEL-TESTER-V1.PY</code> (recebe requisições de teste).</p>
+                    <p><strong>Disponível em:</strong> <span class="badge badge-port">Porta 8780</span> - Endpoints <code class="code">/predict</code> (POST) e <code class="code">/model_status</code> (GET)</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">🧪</div>
+                <div class="content">
+                    <h4><span class="badge badge-tool">Tester</span> API-SERVER-MODEL-TESTER-V1.PY</h4>
+                    <p><strong>Função:</strong> Um cliente de teste para o modelo em produção. <span class="highlight">Gera dados sintéticos</span>, os envia para a API de serviço do modelo (8780), recebe previsões e gera um relatório de teste detalhado com gráficos.</p>
+                    <p><strong>Interage com:</strong> <code>API-SERVER-MODEL-LOAD-FROM-ML-FLOW--PREDICT-SERVICE-V1.PY</code> (GET status, POST predict).</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">📈</div>
+                <div class="content">
+                    <h4><span class="badge badge-mlflow">MLflow Pipeline</span> ML-FLOW-DATA-PIPELINE-GRAPH-GEN-V1.PY</h4>
+                    <p><strong>Função:</strong> Um pipeline de <span class="highlight">análise de dados e geração de relatórios/gráficos</span>. Busca dados brutos do Data Lake (8778), processa-os (ex: encontra os top 10 modelos mais vendidos), gera um gráfico e o loga no MLflow e também faz upload para o Artifact Storage (8779).</p>
+                    <p><strong>Interage com:</strong> <code>API-OBJECT-STORAGE-SERVER-V1.PY</code> (GET), <span class="badge badge-tool">MLflow Server</span> (log de artefatos), <code>API-SERVER-DATA-STORAGE-OUTPUT-V1.PY</code> (upload).</p>
+                </div>
+            </div>
+
+            <div class="component-block">
+                <div class="icon">🌐</div>
+                <div class="content">
+                    <h4><span class="badge badge-tool">Prefect Server</span> PREFECT-SERVER-V1.PY</h4>
+                    <p><strong>Função:</strong> Inicia o <span class="highlight">servidor local do Prefect</span>, fornecendo a UI e o backend para monitorar e orquestrar os flows Prefect (como o de ingestão de dados).</p>
+                    <p><strong>Interage com:</strong> O Prefect Flow de ingestão.</p>
+                    <p><strong>Disponível em:</strong> <span class="badge badge-port">Porta 4200</span> - UI do Prefect</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="fluxo-detalhado">
+            <h2>🌊 Fluxo de Dados e Processamento</h2>
+            <p>O fluxo de dados segue uma sequência lógica, garantindo que os dados sejam processados, transformados e utilizados em cada etapa do ciclo de vida do ML:</p>
+
+            <div class="full-width-flow">
+                <div class="step">
+                    <span class="step-number">1️⃣</span>
+                    <span class="step-description"><strong>Geração de Dados:</strong> O serviço <code class="code">API-DATA-SERVER-V1.PY</code> (porta 8777) simula a geração contínua de dados de vendas de veículos.</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">2️⃣</span>
+                    <span class="step-description"><strong>Ingestão Orquestrada:</strong> O <code class="code">PREFECT-DATA-INJECTION-FLOW-V1.PY</code>, orquestrado pelo Prefect, <strong style="color:var(--prefect-color)">busca</strong> os dados da API de vendas e os <strong style="color:var(--prefect-color)">envia</strong> para o Data Lake.</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">3️⃣</span>
+                    <span class="step-description"><strong>Armazenamento Bruto (Data Lake):</strong> A <code class="code">API-OBJECT-STORAGE-SERVER-V1.PY</code> (porta 8778) recebe os dados e os <strong style="color:var(--badge-db)">armazena</strong> em um banco de dados SQLite (<code>sales_data_lake.db</code>), atuando como um "data lake" passivo.</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">4️⃣</span>
+                    <span class="step-description"><strong>Treinamento do Modelo ML:</strong> O <code class="code">ML-FLOW-DATA-PIPELINE-MODEL-TRAINER-GRAPH-REPORT-EXPORTER.PY</code> <strong style="color:var(--mlflow-color)">lê</strong> os dados do Data Lake, pré-processa-os, <strong style="color:var(--mlflow-color)">treina</strong> um modelo Keras de previsão de vendas e <strong style="color:var(--mlflow-color)">registra</strong> o modelo (com seu pré-processador) no MLflow Model Registry (porta 5001). Relatórios e gráficos são gerados e enviados para o Artifact Storage (8779).</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">5️⃣</span>
+                    <span class="step-description"><strong>Serviço de Modelo:</strong> A <code class="code">API-SERVER-MODEL-LOAD-FROM-ML-FLOW--PREDICT-SERVICE-V1.PY</code> (porta 8780) <strong style="color:var(--accent-color)">carrega</strong> a versão mais recente do modelo do MLflow Registry e <strong style="color:var(--accent-color)">expõe</strong> um endpoint para inferência (previsões).</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">6️⃣</span>
+                    <span class="step-description"><strong>Teste e Validação Contínua:</strong> O <code class="code">API-SERVER-MODEL-TESTER-V1.PY</code> <strong style="color:var(--info-color)">testa</strong> o endpoint de previsão (8780) com dados sintéticos, gerando relatórios de desempenho e validando a funcionalidade do modelo em produção.</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">7️⃣</span>
+                    <span class="step-description"><strong>Análise e Relatórios de Negócios:</strong> Paralelamente, o <code class="code">ML-FLOW-DATA-PIPELINE-GRAPH-GEN-V1.PY</code> <strong style="color:var(--mlflow-color)">lê</strong> os dados do Data Lake, gera <strong style="color:var(--mlflow-color)">gráficos analíticos</strong> (ex: Top 10 modelos) e os <strong style="color:var(--mlflow-color)">armazena</strong> no MLflow e no Artifact Storage (8779).</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="tecnologias">
+            <h2><span role="img" aria-label="Tecnologias">⚙️</span> Tecnologias Utilizadas</h2>
+            <p>O pipeline é construído com base em um conjunto de tecnologias modernas para MLOps e desenvolvimento de APIs:</p>
+            <div class="grid-technologies">
+                <div class="tech-item"><span class="tech-icon">🐍</span> Python</div>
+                <div class="tech-item"><span class="tech-icon">🌐</span> Flask</div>
+                <div class="tech-item"><span class="tech-icon">🌊</span> Prefect</div>
+                <div class="tech-item"><span class="tech-icon">🧡</span> MLflow</div>
+                <div class="tech-item"><span class="tech-icon">🧠</span> TensorFlow/Keras</div>
+                <div class="tech-item"><span class="tech-icon">🧪</span> Scikit-learn</div>
+                <div class="tech-item"><span class="tech-icon">📈</span> Pandas / NumPy</div>
+                <div class="tech-item"><span class="tech-icon">📊</span> Matplotlib</div>
+                <div class="tech-item"><span class="tech-icon">🗄️</span> SQLite</div>
+                <div class="tech-item"><span class="tech-icon">🔌</span> Requests</div>
+            </div>
+        </section>
+
+        <section id="como-executar">
+            <h2>🚀 Como Colocar o Pipeline em Funcionamento</h2>
+            <p class="execution-steps">
+                <span class="highlight">Para iniciar e testar o pipeline completo, siga os passos na ordem indicada:</span>
+                <ol>
+                    <li><strong style="color: var(--dark-blue);">Inicie o Servidor MLflow:</strong><br>
+                        Abra um terminal e execute: <code class="code">python ML-FLOW-SERVER-V1.PY</code><br>
+                        <em>Acesse a UI em: <a href="http://127.0.0.1:5001" target="_blank">http://127.0.0.1:5001</a></em></li>
+                    <li><strong style="color: var(--dark-blue);">Inicie o Servidor Prefect:</strong><br>
+                        Abra outro terminal e execute: <code class="code">python PREFECT-SERVER-V1.PY</code><br>
+                        <em>Acesse a UI em: <a href="http://localhost:4200" target="_blank">http://localhost:4200</a></em></li>
+                    <li><strong style="color: var(--dark-blue);">Inicie a API de Dados de Vendas (Fonte):</strong><br>
+                        Abra outro terminal e execute: <code class="code">python API-DATA-SERVER-V1.PY</code><br>
+                        <em>Esta API rodará na porta <span class="badge badge-port">8777</span>.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Inicie a API de Storage de Dados (Data Lake):</strong><br>
+                        Abra outro terminal e execute: <code class="code">python API-OBJECT-STORAGE-SERVER-V1.PY</code><br>
+                        <em>Esta API rodará na porta <span class="badge badge-port">8778</span>.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Inicie a API de Storage de Artefatos:</strong><br>
+                        Abra outro terminal e execute: <code class="code">python API-SERVER-DATA-STORAGE-OUTPUT-V1.PY</code><br>
+                        <em>Esta API rodará na porta <span class="badge badge-port">8779</span>.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Execute o Flow de Ingestão de Dados Prefect:</strong><br>
+                        Abra outro terminal e execute: <code class="code">python PREFECT-DATA-INJECTION-FLOW-V1.PY</code><br>
+                        <em>Isso buscará dados da porta 8777 e os enviará para a 8778. Você verá um "run" na UI do Prefect.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Execute o Pipeline de Treinamento e Registro do Modelo MLflow:</strong><br>
+                        Abra outro terminal e execute: <code class="code">python ML-FLOW-DATA-PIPELINE-MODEL-TRAINER-GRAPH-REPORT-EXPORTER.PY</code><br>
+                        <em>Este pipeline buscará dados da 8778, treinará o modelo e o registrará no MLflow (5001), além de subir artefatos para 8779. Verifique a UI do MLflow para o "run" e o modelo registrado.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Inicie a API de Serviço do Modelo (Inferência):</strong><br>
+                        Abra outro terminal e execute: <code class="code">python API-SERVER-MODEL-LOAD-FROM-ML-FLOW--PREDICT-SERVICE-V1.PY</code><br>
+                        <em>Esta API rodará na porta <span class="badge badge-port">8780</span> e carregará o modelo do MLflow.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Execute o Tester da API de Serviço do Modelo:</strong><br>
+                        Abra outro terminal e execute: <code class="code">python API-SERVER-MODEL-TESTER-V1.PY</code><br>
+                        <em>Este script testará a API da porta 8780 e gerará relatórios de teste em <code class="code">test_data_reports/</code>.</em></li>
+                    <li><strong style="color: var(--dark-blue);">Execute o Pipeline de Geração de Gráficos e Relatórios MLflow:</strong><br>
+                        Abra outro terminal e execute: <code class="code">python ML-FLOW-DATA-PIPELINE-GRAPH-GEN-V1.PY</code><br>
+                        <em>Este pipeline buscará dados da 8778, gerará gráficos e os registrará no MLflow (5001) e subirá para 8779.</em></li>
+                </ol>
+                <p><strong>Dica:</strong> Mantenha cada servidor (MLflow, Prefect, APIs Flask) rodando em terminais separados para facilitar o monitoramento e o Ctrl+C para encerrar.</p>
+            </p>
+        </section>
+
+        <section id="consideracoes-futuras">
+            <h2>🔮 Considerações e Próximos Passos</h2>
+            <p>Este pipeline é uma base sólida para um ambiente MLOps. Para evoluções, podemos considerar:</p>
+            <ul>
+                <li><span role="img" aria-label="Monitoramento">👀</span> <strong>Monitoramento Contínuo:</strong> Implementar monitoramento de deriva de dados e desempenho do modelo em produção.</li>
+                <li><span role="img" aria-label="CI/CD">🔄</span> <strong>CI/CD para Modelos:</strong> Automatizar o deploy de novas versões de modelos e pipelines via integração e entrega contínuas.</li>
+                <li><span role="img" aria-label="Orquestração Completa">🔗</span> <strong>Orquestração End-to-End:</strong> Usar Prefect para orquestrar *todos* os pipelines (ingestão, treinamento, avaliação, deploy), não apenas a ingestão inicial.</li>
+                <li><span role="img" aria-label="Auto-escalabilidade">🚀</span> <strong>Auto-escalabilidade:</strong> Implementar soluções como Kubernetes para o deploy dos serviços e modelos.</li>
+                <li><span role="img" aria-label="Ferramentas de Feature Store">🧩</span> <strong>Feature Store:</strong> Introduzir uma Feature Store para gerenciar e servir features de forma consistente para treinamento e inferência.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Documentação criada por Elias Andrade para o Projeto MLOps de Previsão de Vendas Chevrolet 2024. <br>Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Pequeno script para adicionar um efeito de rolagem suave para as âncoras, se desejado.
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
